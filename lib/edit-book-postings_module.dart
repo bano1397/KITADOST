@@ -573,12 +573,15 @@ class _EditBookPostingFormState extends State<EditBookPostingForm> {
       children: [
         Row(
           children: [
-            Text(
-              config.label,
-              style: GoogleFonts.poppins(
-                fontSize: labelFontSize,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF374151),
+            Flexible(
+              child: Text(
+                config.label,
+                style: GoogleFonts.poppins(
+                  fontSize: labelFontSize,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF374151),
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             if (config.required)
@@ -596,6 +599,7 @@ class _EditBookPostingFormState extends State<EditBookPostingForm> {
         if (config.isDropdown && config.dropdownOptions != null)
           DropdownButtonFormField<String>(
             value: _formData[config.key],
+            isExpanded: true, // Fix for overflow
             decoration: InputDecoration(
               prefixIcon: Icon(config.icon, color: const Color(0xFF6B7280), size: iconSize),
               hintText: 'Select ${config.label}',
@@ -604,12 +608,23 @@ class _EditBookPostingFormState extends State<EditBookPostingForm> {
                 fontSize: hintFontSize,
               ),
             ),
+            selectedItemBuilder: (BuildContext context) {
+              return config.dropdownOptions!.map<Widget>((String value) {
+                return Text(
+                  value,
+                  style: GoogleFonts.poppins(fontSize: hintFontSize),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                );
+              }).toList();
+            },
             items: config.dropdownOptions!.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(
                   value,
                   style: GoogleFonts.poppins(fontSize: hintFontSize),
+                  overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList(),
@@ -741,32 +756,38 @@ class _EditBookPostingFormState extends State<EditBookPostingForm> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton.icon(
-                onPressed: _pickImage,
-                icon: Icon(Icons.edit, size: buttonIconSize),
-                label: Text(
-                  'Change Image',
-                  style: GoogleFonts.poppins(fontSize: buttonTextSize),
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.secondary,
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.edit, size: buttonIconSize),
+                  label: Text(
+                    'Change Image',
+                    style: GoogleFonts.poppins(fontSize: buttonTextSize),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.secondary,
+                  ),
                 ),
               ),
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _bookImage = null;
-                    _bookImageBase64 = null;
-                    _imageChanged = true;
-                  });
-                },
-                icon: Icon(Icons.delete_outline, size: buttonIconSize),
-                label: Text(
-                  'Remove Image',
-                  style: GoogleFonts.poppins(fontSize: buttonTextSize),
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _bookImage = null;
+                      _bookImageBase64 = null;
+                      _imageChanged = true;
+                    });
+                  },
+                  icon: Icon(Icons.delete_outline, size: buttonIconSize),
+                  label: Text(
+                    'Remove Image',
+                    style: GoogleFonts.poppins(fontSize: buttonTextSize),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
                 ),
               ),
             ],

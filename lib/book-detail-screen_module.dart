@@ -3,7 +3,9 @@ import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'dart:convert';
+import 'dart:async'; // Add async import for StreamSubscription
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,8 +34,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String? _ownerName;
   File? _ownerAvatar;
   bool _isLoadingOwner = true;
+
   String? _borrowStatus; // 'none', 'pending', 'approved', 'rejected'
   bool _hasUnreturnedBooks = false;
+  String _currentBookStatus = 'available'; // Default status
+  StreamSubscription<DatabaseEvent>? _bookStatusSubscription; // Listener subscription
 
   @override
   void initState() {
@@ -52,6 +57,34 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     _loadOwnerProfile();
     _checkBorrowStatus();
     _checkUnreturnedBooks();
+
+    // Initialize book status and listen for changes
+    _currentBookStatus = widget.book['status'] ?? 'available';
+    _listenToBookStatus();
+  }
+
+  void _listenToBookStatus() {
+    final bookId = widget.bookId;
+    _bookStatusSubscription = FirebaseDatabase.instance
+        .ref('books/$bookId/status')
+        .onValue
+        .listen((event) {
+      if (mounted) {
+        final newStatus = event.snapshot.value as String?;
+        if (newStatus != null && newStatus != _currentBookStatus) {
+            setState(() {
+              _currentBookStatus = newStatus;
+            });
+            print('DEBUG: Real-time book status update: $_currentBookStatus');
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _bookStatusSubscription?.cancel();
+    super.dispose();
   }
   
   // Generate a consistent chat ID for two users
@@ -1083,6 +1116,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       buttonColor = Colors.red;
       buttonIcon = Icons.cancel_outlined;
       onTap = null; // Disable button
+    } else if (_borrowStatus == 'rejected') {
+      buttonText = 'Rejected';
+      buttonColor = Colors.red;
+      buttonIcon = Icons.cancel_outlined;
+      onTap = null; // Disable button
+    } else if (_currentBookStatus == 'borrowed' && _borrowStatus != 'approved') {
+       // Book is borrowed by someone else
+       buttonText = 'Unavailable';
+       buttonColor = Colors.grey;
+       buttonIcon = Icons.lock_outline;
+       onTap = null;
     } else if (_hasUnreturnedBooks) {
       buttonText = 'Cannot Borrow';
       buttonColor = Colors.grey;
@@ -1368,19 +1412,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: bodyTextSize,
-              color: Colors.grey[700],
+          Expanded(
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: bodyTextSize,
+                color: Colors.grey[700],
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          Text(
-            amount,
-            style: GoogleFonts.poppins(
-              fontSize: bodyTextSize,
-              fontWeight: FontWeight.w600,
-              color: AppColors.secondary,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              amount,
+              style: GoogleFonts.poppins(
+                fontSize: bodyTextSize,
+                fontWeight: FontWeight.w600,
+                color: AppColors.secondary,
+              ),
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
             ),
           ),
         ],

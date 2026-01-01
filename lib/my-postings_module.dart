@@ -839,7 +839,7 @@ class _PostingsScreenState extends State<PostingsScreen> {
                       SizedBox(width: titleSpacing),
                       Expanded(
                         child: Text(
-                          'Postings & Requests',
+                          _userRole == 'user' ? 'My Borrowings' : 'Postings & Requests',
                           style: GoogleFonts.poppins(
                             fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
@@ -949,39 +949,7 @@ class _PostingsScreenState extends State<PostingsScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: isMobile ? 8 : 12),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedTabIndex = 2;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: isMobile ? 12 : 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedTabIndex == 2 
-                              ? AppColors.secondary 
-                              : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Borrowed',
-                            style: GoogleFonts.poppins(
-                              fontSize: isMobile ? 12 : 14,
-                              fontWeight: FontWeight.w600,
-                              color: _selectedTabIndex == 2 
-                                  ? Colors.white 
-                                  : Colors.grey[700],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
             ),
