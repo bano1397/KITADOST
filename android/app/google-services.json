@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "345060677822",
+    "firebase_url": "https://notebook-fbaf9-default-rtdb.firebaseio.com",
+    "project_id": "notebook-fbaf9",
+    "storage_bucket": "notebook-fbaf9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345060677822:android:f3a4018b49634f95f9e6ef",
+        "android_client_info": {
+          "package_name": "com.booknest.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345060677822-pqg2udobb01injj8t9o7d3vj7qdqhnjt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.booknest.app",
+            "certificate_hash": "703f2a4109b202c825152f036366b4486c072959"
+          }
+        },
+        {
+          "client_id": "345060677822-gtjdlc731usvt06hnu33irth9fpdmkk6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj6V0EYb6oKhvZ3aPzSnedS4rCw9M-Fcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345060677822-gtjdlc731usvt06hnu33irth9fpdmkk6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
